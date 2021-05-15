@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { get } from '../Services/ApiBase'
-
+import axios from 'axios';
 
 
 
@@ -19,19 +19,28 @@ const Main = () => {
         data: false,
     });
 
+    const [errorValue, setErrorValue] = useState({
+        error: false,
+        data: '',
+    });
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorValue({ data: '', error: false });
         setLoaderValue({ data: true });
         try {
             const apiData = await get(`https://prime-checker-backend.herokuapp.com/api/v1/prime/${inputValue.data}`);
             const resData = apiData.data.data.nearestPrime;
             setResultValue({ data: resData });
-
             setLoaderValue({ data: false });
         }
         catch (e) {
-            console.log(e);
-            setLoaderValue({ data: false });
+            if (e.response) {
+                setLoaderValue({ data: false });
+                setErrorValue({ data: e.response.data.message, error: true });
+
+            }
+
         }
     };
 
@@ -64,7 +73,7 @@ const Main = () => {
 
                 {loaderValue.data ? <b> Loading...</b> : <div >
                     <b> Result :</b>
-                    <p id="result">The answer is {resultValue.data}</p>
+                    {errorValue.error ? <p id="result">{errorValue.data}</p> : <p id="result">The answer is {resultValue.data}</p>}
                 </div>}
             </div>
         </div >

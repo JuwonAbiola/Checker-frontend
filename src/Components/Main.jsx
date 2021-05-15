@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { post, get } from '../Services/ApiBase'
+import { get } from '../Services/ApiBase'
 
 
 
@@ -23,8 +23,10 @@ const Main = () => {
         e.preventDefault();
         setLoaderValue({ data: true });
         try {
-            const data = await get('https://jsonplaceholder.typicode.com/todos/1');
-            console.log(data);
+            const apiData = await get(`https://prime-checker-backend.herokuapp.com/api/v1/prime/${inputValue.data}`);
+            const resData = apiData.data.data.nearestPrime;
+            setResultValue({ data: resData });
+
             setLoaderValue({ data: false });
         }
         catch (e) {
@@ -62,7 +64,7 @@ const Main = () => {
 
                 {loaderValue.data ? <b> Loading...</b> : <div >
                     <b> Result :</b>
-                    <p id="result">The answer is {inputValue.data}</p>
+                    <p id="result">The answer is {resultValue.data}</p>
                 </div>}
             </div>
         </div >
